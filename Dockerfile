@@ -7,6 +7,9 @@ RUN apt-get update
 RUN apt-get install -y maven3
 RUN ln -s /usr/share/maven3/bin/mvn /usr/bin/mvn
 
+ENV TZ=Europe/Helsinki
+RUN ln -snf /usr/share/zoneinfo/$TZ /etc/localtime && echo $TZ > /etc/timezone
+
 WORKDIR /code
 ADD pom.xml /code/pom.xml
 
