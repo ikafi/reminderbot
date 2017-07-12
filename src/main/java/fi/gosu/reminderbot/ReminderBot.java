@@ -18,7 +18,7 @@ public class ReminderBot extends PircBot {
 
     public static void main(String[] args) throws IOException, IrcException {
         reminderBot.setName("ReminderBot");
-        reminderBot.setVersion("ReminderBot v. 0.1.0");
+        reminderBot.setVersion("ReminderBot v. 0.1.1");
         reminderBot.setLogin("reminderbot");
         reminderBot.setVerbose(true);
         reminderBot.connect("irc.quakenet.org");
@@ -26,10 +26,8 @@ public class ReminderBot extends PircBot {
         new Timer().scheduleAtFixedRate(new TimerTask(){
             @Override
             public void run(){
-                Date date = new Date();
-                Calendar calendar = GregorianCalendar.getInstance();
-                calendar.setTime(date);
-                calendar.set(Calendar.AM_PM, 1);
+                Calendar calendar = Calendar.getInstance();
+                calendar.setTime(new Date());
                 if (lastDay != calendar.get(Calendar.DATE)) {
                     for (Reminder reminder : reminders) {
                         reminder.setDone(false);
@@ -57,7 +55,15 @@ public class ReminderBot extends PircBot {
                 if (command.equals("!add") && parts.length >= 3) {
                     String time = parts[1];
                     String text = message.substring(message.indexOf(" ", 5) + 1);
-                    reminders.add(new Reminder(text, time));
+                    Reminder reminder = new Reminder(text, time);
+                    Calendar calendar = Calendar.getInstance();
+                    calendar.setTime(new Date());
+                    int hours = calendar.get(Calendar.HOUR_OF_DAY);
+                    int minutes = calendar.get(Calendar.MINUTE);
+                    if (hours > reminder.getHours() || (hours == reminder.getHours() && minutes > reminder.getMinutes())) {
+                        reminder.setDone(true);
+                    }
+                    reminders.add(reminder);
                 } else if (command.equals("!list")) {
                     for (int i = 0; i < reminders.size(); i++) {
                         reminderBot.sendMessage("#eka.priva", (i+1) + ") " + reminders.get(i).getTime() + " - " + reminders.get(i).getText());
