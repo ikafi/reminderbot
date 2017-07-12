@@ -29,6 +29,7 @@ public class ReminderBot extends PircBot {
                 Date date = new Date();
                 Calendar calendar = GregorianCalendar.getInstance();
                 calendar.setTime(date);
+                calendar.set(Calendar.AM_PM, 1);
                 if (lastDay != calendar.get(Calendar.DATE)) {
                     for (Reminder reminder : reminders) {
                         reminder.setDone(false);
