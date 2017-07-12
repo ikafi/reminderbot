@@ -14,6 +14,7 @@ public class ReminderBot extends PircBot {
 
     public static final List<Reminder> reminders = new ArrayList<Reminder>();
     public static final ReminderBot reminderBot = new ReminderBot();
+    public static int lastDay = -1;
 
     public static void main(String[] args) throws IOException, IrcException {
         reminderBot.setName("ReminderBot");
@@ -25,9 +26,15 @@ public class ReminderBot extends PircBot {
         new Timer().scheduleAtFixedRate(new TimerTask(){
             @Override
             public void run(){
-                Date date = new Date();   // given date
-                Calendar calendar = GregorianCalendar.getInstance(); // creates a new calendar instance
+                Date date = new Date();
+                Calendar calendar = GregorianCalendar.getInstance();
                 calendar.setTime(date);
+                if (lastDay != calendar.get(Calendar.DATE)) {
+                    for (Reminder reminder : reminders) {
+                        reminder.setDone(false);
+                    }
+                    lastDay = calendar.get(Calendar.DATE);
+                }
                 int hours = calendar.get(Calendar.HOUR_OF_DAY);
                 int minutes = calendar.get(Calendar.MINUTE);
                 for (Reminder reminder : reminders) {
